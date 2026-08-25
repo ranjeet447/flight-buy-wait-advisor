@@ -1,0 +1,106 @@
+# ==========================================
+# Python & Virtual Environments
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ==========================================
+# Testing & Code Quality
+# ==========================================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# ==========================================
+# Data, DVC & Large Artifacts
+# ==========================================
+# Raw and large processed datasets (tracked by DVC, not Git)
+data/raw/*
+!data/raw/.gitignore
+!data/raw/*.dvc
+
+data/processed/*
+!data/processed/.gitignore
+!data/processed/*.dvc
+
+# DVC internal caches and state
+.dvc/cache/
+.dvc/tmp/
+
+# ==========================================
+# MLOps Tools (MLflow, Feast, Great Expectations)
+# ==========================================
+# Local MLflow runs and artifact storage
+mlruns/
+mlartifacts/
+
+# Feast local registry & offline sqlite/db files
+feature_store/data/
+feature_store/*.db
+feature_store/*.sqlite
+*.db
+*.sqlite
+*.sqlite3
+
+# Great Expectations uncommitted files
+gx/uncommitted/
+great_expectations/uncommitted/
+
+# Evidently AI generated reports (unless deploying to docs/)
+monitoring/reports/*.html
+monitoring/reports/*.json
+
+# ==========================================
+# Environment Variables, Secrets & Cloud
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+aws_credentials
+
+# ==========================================
+# IDEs & Operating Systems
+# ==========================================
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

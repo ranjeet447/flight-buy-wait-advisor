@@ -8,6 +8,7 @@ from pathlib import Path
 import time
 from typing import Any, Dict
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import mlflow
 import mlflow.lightgbm
@@ -53,6 +54,14 @@ app = FastAPI(
     title="Indian Domestic Flight 'Buy vs. Wait' Advisor API",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

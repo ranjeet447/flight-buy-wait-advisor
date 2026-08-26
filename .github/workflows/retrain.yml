@@ -1,0 +1,88 @@
+name: Continuous Training & Automated Retraining Loop
+
+on:
+  # 1. Triggered via Evidently AI Webhook on Drift Detection
+  repository_dispatch:
+    types: [ drift_detected_retrain ]
+
+  # 2. Triggered on weekly scheduled cadence
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight UTC
+
+  # 3. Triggered manually from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  retrain-evaluate-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install --prefer-binary -r requirements.txt
+
+      # 1. Configure AWS Credentials upfront for DVC and ECR
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # 2. Pull raw data from S3 via DVC
+      - name: Pull Data from S3 via DVC
+        run: dvc pull data/raw/Clean_Dataset.csv.dvc
+
+      # 3. Validate Data Quality with Great Expectations
+      - name: Re-run Great Expectations Data Quality Gate
+        run: python3 src/data/validate.py
+
+      # 4. Feature Engineering
+      - name: Re-engineer Features
+        run: python3 src/features/build_features.py
+
+      # 5. Model Retraining with MLflow
+      - name: Retrain Model & Log to MLflow Registry
+        run: python3 src/models/train.py
+
+      # 6. Automated Model Performance Gating Check
+      - name: Metric Gating Check
+        run: |
+          python3 -c "
+          import json
+          with open('models/metrics.json') as f:
+              m = json.load(f)
+          print('Model Metrics:', m)
+          assert m['r2_score'] > 0.95, f'R2 score {m[\"r2_score\"]} below threshold 0.95'
+          assert m['mape_percent'] < 16.0, f'MAPE {m[\"mape_percent\"]} exceeds threshold 16.0%'
+          print('✅ Model passed all production quality gating checks!')
+          "
+
+      # 7. Integration Tests on Retrained Model
+      - name: Run Integration Tests on Retrained Model
+        run: pytest tests/test_api.py -v
+
+      # 8. Log in to ECR and Deploy Updated Image
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Updated Multi-Arch Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: flight-buy-wait-advisor
+          IMAGE_TAG: retrained-${{ github.sha }}
+        run: |
+          docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f service/Dockerfile .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest

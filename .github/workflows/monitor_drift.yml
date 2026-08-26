@@ -47,9 +47,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 monitoring/flight_drift_monitor.py
 
-      # 3. Publish Drift Report to GitHub Pages
-      - name: Deploy Drift Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./monitoring/reports
+      # 3. Commit and push updated report to main branch (docs/ folder)
+      - name: Commit & Push Drift Report to Main Branch (docs/)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          cp monitoring/reports/flight_drift_report.html docs/flight_drift_report.html || true
+          git add docs/flight_drift_report.html
+          if git diff --staged --quiet; then
+            echo "No changes detected in docs/flight_drift_report.html"
+          else
+            git commit -m "chore(monitoring): update live drift report in docs/ [skip ci]"
+            git push origin main
+          fi

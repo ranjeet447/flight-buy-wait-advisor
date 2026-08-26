@@ -86,15 +86,22 @@ def generate_drift_report():
 
   print("\n📈 Generating interactive Evidently AI HTML dashboard...")
   report_path = REPORT_DIR / "flight_drift_report.html"
+  docs_report_path = Path("docs") / "flight_drift_report.html"
   if EVIDENTLY_V2:
     report = Report([DataDriftPreset()])
     eval_result = report.run(current_data=current, reference_data=reference)
     eval_result.save_html(str(report_path))
+    if docs_report_path.parent.exists():
+      eval_result.save_html(str(docs_report_path))
   else:
     report = Report(metrics=[DataDriftPreset()])
     report.run(reference_data=reference, current_data=current)
     report.save_html(str(report_path))
+    if docs_report_path.parent.exists():
+      report.save_html(str(docs_report_path))
   print(f"✅ Live Drift Report generated: {report_path.resolve()}")
+  if docs_report_path.exists():
+    print(f"✅ GitHub Pages Drift Report updated: {docs_report_path.resolve()}")
 
 
 if __name__ == "__main__":

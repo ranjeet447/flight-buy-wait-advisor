@@ -24,9 +24,23 @@ jobs:
           pip install --upgrade pip
           pip install --prefer-binary -r requirements.txt
 
+      # 1. Authenticate with AWS S3 to pull data via DVC
+      - name: Configure AWS Credentials for DVC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      # 2. Pull raw dataset from S3 via DVC
+      - name: Pull Data from S3 via DVC
+        run: dvc pull data/raw/Clean_Dataset.csv.dvc
+
+      # 3. Run Great Expectations on the pulled dataset
       - name: Run Data Validation Gate (Great Expectations)
         run: python3 src/data/validate.py
 
+      # 4. Run Pytest test suite
       - name: Run Automated Tests (Pytest)
         run: pytest tests/test_api.py -v
 

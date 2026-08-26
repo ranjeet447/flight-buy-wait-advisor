@@ -1,0 +1,29 @@
+{
+  "family": "flight-advisor-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::947073313595:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "flight-advisor-api",
+      "image": "947073313595.dkr.ecr.ap-south-1.amazonaws.com/flight-buy-wait-advisor:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 8000,
+          "protocol": "tcp"
+        }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      }
+    }
+  ]
+}

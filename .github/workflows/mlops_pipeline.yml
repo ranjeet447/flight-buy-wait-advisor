@@ -24,7 +24,7 @@ jobs:
           pip install --upgrade pip
           pip install --prefer-binary -r requirements.txt
 
-      # 1. Authenticate with AWS S3 to pull data via DVC
+      # 1. Authenticate with AWS S3
       - name: Configure AWS Credentials for DVC
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -40,7 +40,11 @@ jobs:
       - name: Run Data Validation Gate (Great Expectations)
         run: python3 src/data/validate.py
 
-      # 4. Run Pytest test suite
+      # 4. Generate Feast Feature Tables
+      - name: Generate Feast Feature Tables
+        run: python3 src/features/build_features.py
+
+      # 5. Run Automated Tests
       - name: Run Automated Tests (Pytest)
         run: pytest tests/test_api.py -v
 

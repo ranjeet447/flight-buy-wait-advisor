@@ -1,0 +1,55 @@
+name: Daily Drift Monitoring & Auto-Retraining Trigger
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight UTC
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  monitor-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install --prefer-binary -r requirements.txt
+
+      # 1. Pull data for baseline comparison
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Pull Data via DVC
+        run: dvc pull data/raw/Clean_Dataset.csv.dvc
+
+      - name: Build Features
+        run: python3 src/features/build_features.py
+
+      # 2. Run Drift Monitor & Trigger Retraining Webhook if Drifted
+      - name: Run Evidently AI Drift Monitor
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 monitoring/flight_drift_monitor.py
+
+      # 3. Publish Drift Report to GitHub Pages
+      - name: Deploy Drift Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./monitoring/reports

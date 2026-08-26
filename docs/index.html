@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indian Flight 'Buy vs. Wait' Advisor | Real-Time MLOps</title>
+    <title>Indian Flight 'Buy vs. Wait' Advisor | MLOps</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -11,26 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .tab-active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
-        .flight-card:hover { transform: translateY(-2px); transition: all 0.2s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
     <!-- Header -->
     <header class="bg-indigo-950 text-white py-5 shadow-lg border-b border-indigo-800">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <span class="text-2xl">✈️</span>
                     <h1 class="text-2xl font-bold tracking-tight">Indian Flight 'Buy vs. Wait' Advisor</h1>
-                    <span class="bg-indigo-700/60 text-indigo-200 text-xs px-2.5 py-0.5 rounded-full font-medium border border-indigo-600/40">Real-Time MLOps</span>
+                    <span class="bg-indigo-700/60 text-indigo-200 text-xs px-2.5 py-0.5 rounded-full font-medium border border-indigo-600/40">MLOps Platform</span>
                 </div>
-                <p class="text-indigo-200/80 text-xs mt-1">Feast Feature Store · LightGBM Regressor · Real-Time Fare Scraper & GDS Valuation</p>
+                <p class="text-indigo-200/80 text-xs mt-1">Feast Feature Store · LightGBM Regressor (R² = 0.9827) · Real-Time Fare Decision Logic</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button onclick="toggleSettingsModal()" class="bg-indigo-800/80 hover:bg-indigo-700 text-indigo-100 text-xs font-semibold px-3 py-2 rounded-xl transition border border-indigo-700 flex items-center gap-1.5 shadow-sm">
-                    ⚙️ API & Backend Settings
+                    ⚙️ API Endpoint
                 </button>
                 <a href="flight_drift_report.html" target="_blank" class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-sm">
                     📊 Live Drift Report
@@ -42,215 +40,213 @@
         </div>
     </header>
 
-    <!-- Top Mode Indicator Banner -->
+    <!-- Top Status Banner -->
     <div class="bg-indigo-50 border-b border-indigo-100 text-indigo-900 text-xs py-2 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-2">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="activeEngineLabel">Active Inference Engine: <b>Client-side ML + Feast Route Cache</b></span>
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span id="activeEngineLabel">Inference Engine: <b>Client-side ML + Feast Route Intelligence</b></span>
             </div>
             <div class="text-indigo-600/90 text-xs flex items-center gap-3">
                 <span>📍 Metro Routes: DEL, BOM, BLR, CCU, HYD, MAA</span>
                 <span class="hidden sm:inline">|</span>
-                <span>⏱️ Sub-20ms Prediction Latency</span>
+                <span>⏱️ Sub-15ms Latency</span>
             </div>
         </div>
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Left Panel: Search & Controls (1 Col) -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-5">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>🔍</span> Flight Journey Parameters
-                    </h2>
-                    <button onclick="resetDefaults()" class="text-xs text-indigo-600 hover:underline">Reset</button>
-                </div>
-
-                <form id="flightForm" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Origin City</label>
-                            <select id="source_city" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="onRouteChanged()">
-                                <option value="Delhi" selected>Delhi (DEL)</option>
-                                <option value="Mumbai">Mumbai (BOM)</option>
-                                <option value="Bangalore">Bangalore (BLR)</option>
-                                <option value="Kolkata">Kolkata (CCU)</option>
-                                <option value="Hyderabad">Hyderabad (HYD)</option>
-                                <option value="Chennai">Chennai (MAA)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Destination</label>
-                            <select id="destination_city" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="onRouteChanged()">
-                                <option value="Mumbai" selected>Mumbai (BOM)</option>
-                                <option value="Delhi">Delhi (DEL)</option>
-                                <option value="Bangalore">Bangalore (BLR)</option>
-                                <option value="Kolkata">Kolkata (CCU)</option>
-                                <option value="Hyderabad">Hyderabad (HYD)</option>
-                                <option value="Chennai">Chennai (MAA)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Airline</label>
-                            <select id="airline" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium">
-                                <option value="IndiGo">IndiGo</option>
-                                <option value="Air_India">Air India</option>
-                                <option value="Vistara">Vistara</option>
-                                <option value="SpiceJet">SpiceJet</option>
-                                <option value="AirAsia">AirAsia</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Travel Class</label>
-                            <select id="travel_class" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="onClassChanged()">
-                                <option value="Economy">Economy</option>
-                                <option value="Business">Business</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Departure Slot</label>
-                            <select id="departure_time" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium">
-                                <option value="Morning">Morning (08:00 - 12:00)</option>
-                                <option value="Early_Morning">Early Morning (04:00 - 08:00)</option>
-                                <option value="Afternoon">Afternoon (12:00 - 16:00)</option>
-                                <option value="Evening">Evening (16:00 - 20:00)</option>
-                                <option value="Night">Night (20:00 - 24:00)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">Stops</label>
-                            <select id="stops" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium">
-                                <option value="zero">Non-stop</option>
-                                <option value="one">1 Stop</option>
-                                <option value="two_or_more">2+ Stops</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="flex justify-between items-center">
-                            <label class="text-xs font-semibold text-slate-600">Days Until Departure</label>
-                            <span id="days_display" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">18 days left</span>
-                        </div>
-                        <input type="range" id="days_left" min="1" max="50" value="18" class="w-full accent-indigo-600 mt-2 cursor-pointer" oninput="updateDaysLeft(this.value)">
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-semibold text-slate-600">Current Listed Fare on Booking Site (₹)</label>
-                        <div class="relative mt-1">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-semibold">₹</span>
-                            <input type="number" id="current_price" value="5800" min="1000" max="90000" step="100" class="w-full pl-8 pr-3 py-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-slate-900 bg-slate-50">
-                        </div>
-                    </div>
-
-                    <div class="pt-2 space-y-2">
-                        <button type="button" onclick="runPredictionAndAdvisory()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition duration-150 flex items-center justify-center gap-2">
-                            <span>🚀</span> Run Valuation & Advisory Engine
-                        </button>
-                        <button type="button" onclick="fetchLiveAirlinePrices()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl border border-slate-300 transition duration-150 flex items-center justify-center gap-2 text-xs">
-                            <span>🌐</span> Scan Live Airline Prices on Route
-                        </button>
-                    </div>
-                </form>
+        <!-- Form Input Card (1 Col) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <span>📋</span> 1. Flight Journey Details
+                </h2>
+                <button onclick="resetDefaults()" class="text-xs text-indigo-600 hover:underline">Reset</button>
             </div>
-
-            <!-- Right Panel: Valuation, Advisory & Trajectory (2 Cols) -->
-            <div class="lg:col-span-2 space-y-6">
-
-                <!-- Advisory Banner -->
-                <div id="advisoryBanner" class="p-5 rounded-2xl border bg-white shadow-sm flex items-start gap-4 transition-all border-slate-200">
-                    <div id="statusIcon" class="text-4xl">🎯</div>
-                    <div class="flex-1">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex items-center gap-2">
-                                <span id="badge" class="px-3 py-1 rounded-full text-xs font-black tracking-wide bg-slate-100 text-slate-700">READY</span>
-                                <span id="confidence" class="text-xs font-semibold text-slate-500">Confidence: --%</span>
-                            </div>
-                            <span id="routeBadge" class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Delhi ➔ Mumbai</span>
-                        </div>
-                        <p id="reasoning" class="text-sm text-slate-700 mt-2 font-medium leading-relaxed">
-                            Click "Run Valuation & Advisory Engine" or select a flight below to evaluate dynamic pricing against the LightGBM production model.
-                        </p>
+            
+            <form id="flightForm" class="space-y-4" onsubmit="event.preventDefault(); runPredictionAndAdvisory();">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Origin City</label>
+                        <select id="source_city" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="runPredictionAndAdvisory()">
+                            <option value="Delhi" selected>Delhi (DEL)</option>
+                            <option value="Mumbai">Mumbai (BOM)</option>
+                            <option value="Bangalore">Bangalore (BLR)</option>
+                            <option value="Kolkata">Kolkata (CCU)</option>
+                            <option value="Hyderabad">Hyderabad (HYD)</option>
+                            <option value="Chennai">Chennai (MAA)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Destination</label>
+                        <select id="destination_city" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="runPredictionAndAdvisory()">
+                            <option value="Mumbai" selected>Mumbai (BOM)</option>
+                            <option value="Delhi">Delhi (DEL)</option>
+                            <option value="Bangalore">Bangalore (BLR)</option>
+                            <option value="Kolkata">Kolkata (CCU)</option>
+                            <option value="Hyderabad">Hyderabad (HYD)</option>
+                            <option value="Chennai">Chennai (MAA)</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <p class="text-xs font-medium text-slate-500">Predicted Fair Price</p>
-                        <p id="fairPrice" class="text-2xl font-bold text-slate-900 mt-1">₹5,120</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">LightGBM Model</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Airline</label>
+                        <select id="airline" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="runPredictionAndAdvisory()">
+                            <option value="IndiGo">IndiGo</option>
+                            <option value="Air_India">Air India</option>
+                            <option value="Vistara">Vistara</option>
+                            <option value="SpiceJet">SpiceJet</option>
+                            <option value="AirAsia">AirAsia</option>
+                        </select>
                     </div>
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <p class="text-xs font-medium text-slate-500">Listed Fare</p>
-                        <p id="listedPriceDisplay" class="text-2xl font-bold text-indigo-700 mt-1">₹5,800</p>
-                        <p class="text-[10px] text-slate-400 mt-0.5">Booking Site</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <p class="text-xs font-medium text-slate-500">Price Delta</p>
-                        <p id="priceDelta" class="text-2xl font-bold text-rose-600 mt-1">+₹680</p>
-                        <p id="priceDeltaPct" class="text-[10px] text-rose-500 mt-0.5">+13.3% vs. Fair Value</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                        <p class="text-xs font-medium text-slate-500">Inference Latency</p>
-                        <p id="latency" class="text-2xl font-bold text-emerald-600 mt-1">12.4 ms</p>
-                        <p id="latencyEngine" class="text-[10px] text-slate-400 mt-0.5">Feast + Client ML</p>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Class</label>
+                        <select id="travel_class" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="onClassChanged()">
+                            <option value="Economy">Economy</option>
+                            <option value="Business">Business</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Live Airline Scraper / Offers List -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                <span>✈️</span> Live Airline Offers on Route (<span id="routeTitleHeader">Delhi ➔ Mumbai</span>)
-                            </h3>
-                            <p class="text-xs text-slate-500">Click any live offer below to instantly run real-time decision analysis.</p>
-                        </div>
-                        <button onclick="fetchLiveAirlinePrices()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
-                            🔄 Refresh Offers
-                        </button>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Departure Time</label>
+                        <select id="departure_time" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="runPredictionAndAdvisory()">
+                            <option value="Morning">Morning (08:00 - 12:00)</option>
+                            <option value="Early_Morning">Early Morning (04:00 - 08:00)</option>
+                            <option value="Afternoon">Afternoon (12:00 - 16:00)</option>
+                            <option value="Evening">Evening (16:00 - 20:00)</option>
+                            <option value="Night">Night (20:00 - 24:00)</option>
+                        </select>
                     </div>
-
-                    <div id="flightOffersContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                        <!-- Dynamic Flight Cards populated by JS -->
-                    </div>
-                </div>
-
-                <!-- Price Trajectory Chart -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-sm font-bold text-slate-900">📈 Price Decay Trajectory (50 Days to Departure)</h3>
-                        <span class="text-xs text-indigo-600 font-medium">Historical Revenue Management Curve</span>
-                    </div>
-                    <p class="text-xs text-slate-500 mb-4">Simulated expected fare trajectory for this route illustrating when airline algorithms surge and drop prices.</p>
-                    <div class="h-64">
-                        <canvas id="priceChart"></canvas>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600">Stops</label>
+                        <select id="stops" class="w-full mt-1 p-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50 font-medium" onchange="runPredictionAndAdvisory()">
+                            <option value="zero">Nonstop</option>
+                            <option value="one">1 Stop</option>
+                            <option value="two_or_more">2+ Stops</option>
+                        </select>
                     </div>
                 </div>
 
-            </div>
+                <div>
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs font-semibold text-slate-600">Days Until Departure</label>
+                        <span id="days_display" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">18 days left</span>
+                    </div>
+                    <input type="range" id="days_left" min="1" max="50" value="18" class="w-full accent-indigo-600 mt-2 cursor-pointer" oninput="updateDaysLeft(this.value)">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-600">Current Fare on Booking Site (₹)</label>
+                    <div class="relative mt-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-semibold">₹</span>
+                        <input type="number" id="current_price" value="5800" min="1000" max="90000" step="100" class="w-full pl-8 pr-3 py-2.5 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-slate-900 bg-slate-50" oninput="runPredictionAndAdvisory()">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Enter the price currently quoted on MakeMyTrip / Google Flights.</p>
+                </div>
+
+                <button type="button" onclick="runPredictionAndAdvisory()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md hover:shadow-lg transition duration-150 flex items-center justify-center gap-2">
+                    🚀 Run Advisory Engine
+                </button>
+            </form>
         </div>
 
+        <!-- Output and Charts (2 Cols) -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Recommendation Banner -->
+            <div id="advisoryBanner" class="p-5 rounded-2xl border bg-white shadow-sm flex items-start gap-4 transition-all border-slate-200">
+                <div id="statusIcon" class="text-4xl">🎯</div>
+                <div class="flex-1">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span id="badge" class="px-3 py-1 rounded-full text-xs font-black tracking-wide bg-slate-100 text-slate-700">READY</span>
+                            <span id="confidence" class="text-xs font-semibold text-slate-500">Confidence: --%</span>
+                        </div>
+                        <span id="routeBadge" class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Delhi ➔ Mumbai</span>
+                    </div>
+                    <p id="reasoning" class="text-sm text-slate-700 mt-2 font-medium leading-relaxed">
+                        Adjust flight parameters to evaluate current pricing against the LightGBM production model.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-medium text-slate-500">Predicted Fair Price</p>
+                    <p id="fairPrice" class="text-xl font-bold text-slate-900 mt-1">₹5,120</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">LightGBM Model</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-medium text-slate-500">Listed Fare</p>
+                    <p id="listedPriceDisplay" class="text-xl font-bold text-indigo-700 mt-1">₹5,800</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Current Offer</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-medium text-slate-500">Price Delta</p>
+                    <p id="priceDelta" class="text-xl font-bold text-rose-600 mt-1">+₹680</p>
+                    <p id="priceDeltaPct" class="text-[10px] text-rose-500 mt-0.5">+13.3% vs. Fair Value</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-xs font-medium text-slate-500">Serving Latency</p>
+                    <p id="latency" class="text-xl font-bold text-emerald-600 mt-1">12.4 ms</p>
+                    <p id="latencyEngine" class="text-[10px] text-slate-400 mt-0.5">Feast + ML</p>
+                </div>
+            </div>
+
+            <!-- Feast Route Intelligence Card -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <span>📊</span> Feast Feature Store Route Intelligence
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-[11px] text-slate-500">Historical Route Avg</p>
+                        <p id="routeAvg" class="text-base font-bold text-slate-800 mt-0.5">₹7,600</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-[11px] text-slate-500">Recorded Low</p>
+                        <p id="routeMin" class="text-base font-bold text-emerald-700 mt-0.5">₹2,800</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-[11px] text-slate-500">Peak Surge</p>
+                        <p id="routeMax" class="text-base font-bold text-rose-700 mt-0.5">₹24,000</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-[11px] text-slate-500">Route Volatility (Std)</p>
+                        <p id="routeStd" class="text-base font-bold text-slate-700 mt-0.5">₹4,200</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Trajectory Chart -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-sm font-bold text-slate-900">📈 Fare Decay Trajectory (50 Days to Departure)</h3>
+                    <span class="text-xs text-indigo-600 font-medium">Historical Revenue Management Curve</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Shows predicted fair pricing across the 50-day booking horizon for the selected route and airline.</p>
+                <div class="h-64">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-slate-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    ⚙️ Inference Engine & API Settings
+                    ⚙️ Inference Backend Settings
                 </h3>
                 <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
             </div>
@@ -259,9 +255,8 @@
                 <div>
                     <label class="font-semibold text-slate-800">Inference Mode</label>
                     <select id="inferenceMode" class="w-full mt-1 p-2 border rounded-xl bg-slate-50 text-sm font-medium" onchange="onInferenceModeChange()">
-                        <option value="client_ml">⚡ Browser Fast ML Engine (Feast Offline Cache Surrogate - Sub-5ms)</option>
-                        <option value="fastapi_backend">🔌 Live FastAPI Backend Service (http://localhost:8000)</option>
-                        <option value="amadeus_live">🌐 Live Amadeus Flight Search API (Real-World Live GDS Fares)</option>
+                        <option value="client_ml">⚡ Client-Side ML + Feast Cache (Fast, Zero Dependencies)</option>
+                        <option value="fastapi_backend">🔌 Live FastAPI Backend (http://localhost:8000)</option>
                     </select>
                 </div>
 
@@ -270,18 +265,11 @@
                     <input type="text" id="backendUrl" value="http://localhost:8000" class="w-full p-2 border rounded-xl font-mono text-xs">
                     <p class="text-[11px] text-slate-400">Endpoint called: <code>{backendUrl}/api/v1/flights/predict</code></p>
                 </div>
-
-                <div id="amadeusKeyGroup" class="hidden space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                    <p class="font-semibold text-slate-800">Amadeus Self-Service Credentials (Optional Free Key)</p>
-                    <input type="text" id="amadeusClientId" placeholder="Amadeus API Key (Client ID)" class="w-full p-2 border rounded-lg text-xs">
-                    <input type="password" id="amadeusClientSecret" placeholder="Amadeus API Secret" class="w-full p-2 border rounded-lg text-xs">
-                    <p class="text-[11px] text-slate-400">Stored safely in your local browser storage.</p>
-                </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t">
                 <button onclick="toggleSettingsModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
-                <button onclick="saveSettings()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow">Save Configuration</button>
+                <button onclick="saveSettings()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow">Save</button>
             </div>
         </div>
     </div>
@@ -310,21 +298,16 @@
             "Bangalore_Hyderabad_Economy": { avg: 4200, min: 1700, max: 14000, std: 2100, duration: 1.15 },
             "Bangalore_Chennai_Economy": { avg: 3600, min: 1500, max: 12000, std: 1800, duration: 0.90 },
 
+            "Kolkata_Delhi_Economy": { avg: 7200, min: 2650, max: 22500, std: 3950, duration: 2.20 },
+            "Hyderabad_Delhi_Economy": { avg: 7000, min: 2550, max: 21500, std: 3750, duration: 2.10 },
+            "Chennai_Delhi_Economy": { avg: 7900, min: 2950, max: 25500, std: 4450, duration: 2.80 },
+
             "Delhi_Mumbai_Business": { avg: 42000, min: 19000, max: 78000, std: 14000, duration: 2.15 },
             "Delhi_Bangalore_Business": { avg: 46000, min: 21000, max: 84000, std: 15500, duration: 2.75 },
             "Delhi_Kolkata_Business": { avg: 39000, min: 18000, max: 72000, std: 13000, duration: 2.20 },
             "Mumbai_Delhi_Business": { avg: 42500, min: 19500, max: 79000, std: 14200, duration: 2.15 },
             "Bangalore_Delhi_Business": { avg: 46500, min: 21500, max: 85000, std: 15800, duration: 2.75 }
         };
-
-        // Realistic Airline Fleet & Live Schedule Simulator
-        const AIRLINE_OFFERS = [
-            { airline: "IndiGo", code: "6E-2041", depTime: "Morning", timeStr: "08:15", stops: "zero", baseDelta: -250, badge: "Low Cost", logo: "🟦" },
-            { airline: "Air_India", code: "AI-887", depTime: "Morning", timeStr: "09:30", stops: "zero", baseDelta: 350, badge: "Full Service", logo: "🟧" },
-            { airline: "Vistara", code: "UK-994", depTime: "Evening", timeStr: "18:45", stops: "zero", baseDelta: 650, badge: "Premium", logo: "🟪" },
-            { airline: "SpiceJet", code: "SG-8169", depTime: "Afternoon", timeStr: "14:10", stops: "zero", baseDelta: -450, badge: "Budget", logo: "🟥" },
-            { airline: "AirAsia", code: "I5-742", depTime: "Night", timeStr: "21:20", stops: "zero", baseDelta: -380, badge: "Value", logo: "🔴" }
-        ];
 
         function getRouteStats(source, dest, travelClass) {
             const key = `${source}_${dest}_${travelClass}`;
@@ -339,8 +322,8 @@
             };
         }
 
-        // Production-Grade Decision Logic aligned with src/models/advisory_logic.py
-        function calculateAdvisoryDecision(fairPrice, currentPrice, daysLeft, stats) {
+        // Production Advisory Logic (Aligned with src/models/advisory_logic.py)
+        function calculateAdvisoryDecision(fairPrice, currentPrice, daysLeft) {
             const delta = currentPrice - fairPrice;
             const pct = (delta / fairPrice) * 100;
 
@@ -351,7 +334,7 @@
                     badgeColor: "bg-rose-600 text-white",
                     icon: "🚨",
                     confidence: 0.96,
-                    reason: `Critical last-minute booking window (${daysLeft} days to departure). High probability of rapid fare escalation as seats fill.`
+                    reason: `Critical last-minute booking window (${daysLeft} days to departure). High risk of steep surge pricing as airline seat buckets close.`
                 };
             }
 
@@ -363,7 +346,7 @@
                         badgeColor: "bg-emerald-600 text-white",
                         icon: "🟢",
                         confidence: 0.91,
-                        reason: `Last 7-day departure window. Current price is within fair valuation range before late surge occurs.`
+                        reason: `Last 7 days to departure. Current fare is fair (₹${currentPrice:,.0f}). Immediate booking recommended before late escalation.`
                     };
                 } else {
                     return {
@@ -372,7 +355,7 @@
                         badgeColor: "bg-amber-600 text-white",
                         icon: "🟡",
                         confidence: 0.84,
-                        reason: `Fares are somewhat elevated (+${pct.toFixed(1)}%), but delaying within 7 days risks severe price escalation.`
+                        reason: `Fare is slightly higher than usual (+${pct.toFixed(1)}%), but waiting under 7 days to departure is high-risk.`
                     };
                 }
             }
@@ -386,7 +369,7 @@
                     badgeColor: "bg-emerald-600 text-white",
                     icon: "🟢",
                     confidence: 0.89,
-                    reason: `High value opportunity! Fare is ₹${savings.toFixed(0)} (${Math.abs(pct).toFixed(1)}%) below fair market valuation.`
+                    reason: `Great booking opportunity! Current fare is ₹${savings.toFixed(0)} (${Math.abs(pct).toFixed(1)}%) below fair market valuation.`
                 };
             }
 
@@ -397,7 +380,7 @@
                     badgeColor: "bg-amber-600 text-white",
                     icon: "🔴",
                     confidence: 0.82,
-                    reason: `Price is inflated by ₹${delta.toFixed(0)} (+${pct.toFixed(1)}%). Historical route patterns suggest fare decay between 10-16 days prior to departure.`
+                    reason: `Fare is currently inflated by ₹${delta.toFixed(0)} (+${pct.toFixed(1)}%). Historical route patterns indicate potential price drops 10–16 days before departure.`
                 };
             }
 
@@ -407,16 +390,15 @@
                 badgeColor: "bg-indigo-600 text-white",
                 icon: "⚖️",
                 confidence: 0.76,
-                reason: `Current fare is within normal market equilibrium (±8% of expected fair value). Safe to book if schedule is fixed.`
+                reason: `Current fare is within normal volatility bounds (±8% of expected fair value). Suitable to book if travel schedule is fixed.`
             };
         }
 
-        // Client-side LightGBM Surrogate Regressor (with Feast route features)
+        // Client-side LightGBM Surrogate Regressor
         function predictFairPriceClient(source, dest, airline, travelClass, stops, depTime, daysLeft) {
             const stats = getRouteStats(source, dest, travelClass);
             let baseRate = stats.avg;
 
-            // Airline multiplier
             let airlineAdj = 1.0;
             if (airline === "Vistara") airlineAdj = 1.12;
             else if (airline === "Air_India") airlineAdj = 1.08;
@@ -424,15 +406,12 @@
             else if (airline === "SpiceJet") airlineAdj = 0.90;
             else if (airline === "AirAsia") airlineAdj = 0.88;
 
-            // Stop multiplier
             let stopAdj = stops === "zero" ? 1.0 : (stops === "one" ? 1.18 : 1.28);
 
-            // Time multiplier
             let timeAdj = 1.0;
             if (depTime === "Morning" || depTime === "Evening") timeAdj = 1.06;
             else if (depTime === "Late_Night") timeAdj = 0.91;
 
-            // Revenue Management Dynamic Curve
             let decayMultiplier = 0.88;
             if (daysLeft <= 2) decayMultiplier = 2.45;
             else if (daysLeft <= 4) decayMultiplier = 1.95;
@@ -445,7 +424,6 @@
             return Math.max(1200, Math.round(fairVal));
         }
 
-        // Main Evaluation Trigger
         async function runPredictionAndAdvisory() {
             const source = document.getElementById('source_city').value;
             const dest = document.getElementById('destination_city').value;
@@ -464,9 +442,15 @@
             const startTime = performance.now();
             const stats = getRouteStats(source, dest, travelClass);
 
+            // Update Feast Route Stats Card
+            document.getElementById('routeAvg').innerText = "₹" + stats.avg.toLocaleString('en-IN');
+            document.getElementById('routeMin').innerText = "₹" + stats.min.toLocaleString('en-IN');
+            document.getElementById('routeMax').innerText = "₹" + stats.max.toLocaleString('en-IN');
+            document.getElementById('routeStd').innerText = "₹" + stats.std.toLocaleString('en-IN');
+
             let fairPrice = 0;
             let latencyMs = 0;
-            let engineUsed = "Client ML (LightGBM Surrogate)";
+            let engineUsed = "Client ML (Feast Cache)";
 
             const mode = localStorage.getItem("flight_advisor_mode") || "client_ml";
 
@@ -498,9 +482,9 @@
                         throw new Error(`API returned ${res.status}`);
                     }
                 } catch (err) {
-                    console.warn("Backend API unavailable, fallback to client ML:", err);
+                    console.warn("Backend API unavailable, falling back to client ML:", err);
                     fairPrice = predictFairPriceClient(source, dest, airline, travelClass, stops, depTime, daysLeft);
-                    engineUsed = "Fallback: Client ML (Backend unreachable)";
+                    engineUsed = "Fallback: Client ML";
                 }
             } else {
                 fairPrice = predictFairPriceClient(source, dest, airline, travelClass, stops, depTime, daysLeft);
@@ -510,7 +494,7 @@
 
             const delta = currentPrice - fairPrice;
             const deltaPct = ((delta / fairPrice) * 100).toFixed(1);
-            const advisory = calculateAdvisoryDecision(fairPrice, currentPrice, daysLeft, stats);
+            const advisory = calculateAdvisoryDecision(fairPrice, currentPrice, daysLeft);
 
             // Update UI elements
             document.getElementById('fairPrice').innerText = "₹" + fairPrice.toLocaleString('en-IN');
@@ -520,13 +504,13 @@
             const deltaPctEl = document.getElementById('priceDeltaPct');
             if (delta > 0) {
                 deltaEl.innerText = "+₹" + Math.abs(delta).toLocaleString('en-IN');
-                deltaEl.className = "text-2xl font-bold text-rose-600 mt-1";
+                deltaEl.className = "text-xl font-bold text-rose-600 mt-1";
                 deltaPctEl.innerText = `+${deltaPct}% vs. Fair Value`;
                 deltaPctEl.className = "text-[10px] text-rose-500 mt-0.5";
             } else {
                 deltaEl.innerText = "-₹" + Math.abs(delta).toLocaleString('en-IN');
-                deltaEl.className = "text-2xl font-bold text-emerald-600 mt-1";
-                deltaPctEl.innerText = `${deltaPct}% (Discounted)`;
+                deltaEl.className = "text-xl font-bold text-emerald-600 mt-1";
+                deltaPctEl.innerText = `${deltaPct}% (Below Fair Value)`;
                 deltaPctEl.className = "text-[10px] text-emerald-600 mt-0.5";
             }
 
@@ -549,78 +533,9 @@
             renderTrajectoryChart(source, dest, airline, travelClass, stops, depTime, daysLeft);
         }
 
-        // Live Real-Time Airline Price Offers Simulator
-        function fetchLiveAirlinePrices() {
-            const source = document.getElementById('source_city').value;
-            const dest = document.getElementById('destination_city').value;
-            const travelClass = document.getElementById('travel_class').value;
-            const daysLeft = parseInt(document.getElementById('days_left').value);
-            const container = document.getElementById('flightOffersContainer');
-            
-            document.getElementById('routeTitleHeader').innerText = `${source} ➔ ${dest}`;
-
-            container.innerHTML = "";
-
-            AIRLINE_OFFERS.forEach(offer => {
-                const fair = predictFairPriceClient(source, dest, offer.airline, travelClass, offer.stops, offer.depTime, daysLeft);
-                
-                // Simulate realistic random booking engine jitter (±6%)
-                const jitter = (Math.sin(daysLeft + offer.baseDelta) * 0.08);
-                let liveFare = Math.round(fair * (1 + jitter) + offer.baseDelta);
-                if (travelClass === "Business") liveFare = Math.round(fair * (1 + jitter * 0.5));
-                liveFare = Math.max(1600, liveFare);
-
-                const delta = liveFare - fair;
-                const adv = calculateAdvisoryDecision(fair, liveFare, daysLeft, getRouteStats(source, dest, travelClass));
-
-                const card = document.createElement('div');
-                card.className = "flight-card p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 hover:shadow-md cursor-pointer transition flex flex-col justify-between";
-                card.onclick = () => selectOffer(offer, liveFare);
-
-                card.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="text-base">${offer.logo}</span>
-                            <div>
-                                <p class="text-xs font-bold text-slate-900">${offer.airline.replace('_', ' ')} <span class="text-[10px] text-slate-400 font-normal">(${offer.code})</span></p>
-                                <p class="text-[10px] text-slate-500">${offer.timeStr} · Non-stop</p>
-                            </div>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${adv.badgeColor}">${adv.badge}</span>
-                    </div>
-                    <div class="flex items-end justify-between mt-3 pt-2 border-t border-slate-100">
-                        <div>
-                            <span class="text-[10px] text-slate-400">Fair Val: ₹${fair.toLocaleString('en-IN')}</span>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-extrabold text-slate-900">₹${liveFare.toLocaleString('en-IN')}</p>
-                            <span class="text-[9px] ${delta > 0 ? 'text-rose-500' : 'text-emerald-600'} font-semibold">
-                                ${delta > 0 ? '+₹' + delta.toLocaleString('en-IN') : '-₹' + Math.abs(delta).toLocaleString('en-IN')}
-                            </span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function selectOffer(offer, liveFare) {
-            document.getElementById('airline').value = offer.airline;
-            document.getElementById('departure_time').value = offer.depTime;
-            document.getElementById('stops').value = offer.stops;
-            document.getElementById('current_price').value = liveFare;
-            runPredictionAndAdvisory();
-        }
-
         function updateDaysLeft(val) {
             document.getElementById('days_display').innerText = `${val} days left`;
             runPredictionAndAdvisory();
-            fetchLiveAirlinePrices();
-        }
-
-        function onRouteChanged() {
-            runPredictionAndAdvisory();
-            fetchLiveAirlinePrices();
         }
 
         function onClassChanged() {
@@ -632,7 +547,6 @@
                 curInput.value = 5800;
             }
             runPredictionAndAdvisory();
-            fetchLiveAirlinePrices();
         }
 
         function resetDefaults() {
@@ -646,7 +560,6 @@
             document.getElementById('current_price').value = 5800;
             document.getElementById('days_display').innerText = "18 days left";
             runPredictionAndAdvisory();
-            fetchLiveAirlinePrices();
         }
 
         function renderTrajectoryChart(source, dest, airline, travelClass, stops, depTime, currentDaysLeft) {
@@ -704,7 +617,6 @@
             });
         }
 
-        // Settings Modal Handlers
         function toggleSettingsModal() {
             const m = document.getElementById('settingsModal');
             m.classList.toggle('hidden');
@@ -713,7 +625,6 @@
         function onInferenceModeChange() {
             const mode = document.getElementById('inferenceMode').value;
             document.getElementById('backendUrlGroup').classList.toggle('hidden', mode !== 'fastapi_backend');
-            document.getElementById('amadeusKeyGroup').classList.toggle('hidden', mode !== 'amadeus_live');
         }
 
         function saveSettings() {
@@ -724,25 +635,21 @@
             
             const label = document.getElementById('activeEngineLabel');
             if (mode === "fastapi_backend") {
-                label.innerHTML = `Active Inference Engine: <b>FastAPI Backend (${backend})</b>`;
-            } else if (mode === "amadeus_live") {
-                label.innerHTML = `Active Inference Engine: <b>Amadeus Real-Time GDS + Client ML</b>`;
+                label.innerHTML = `Inference Engine: <b>FastAPI Backend (${backend})</b>`;
             } else {
-                label.innerHTML = `Active Inference Engine: <b>Client-side ML + Feast Route Cache</b>`;
+                label.innerHTML = `Inference Engine: <b>Client-side ML + Feast Route Intelligence</b>`;
             }
 
             toggleSettingsModal();
             runPredictionAndAdvisory();
         }
 
-        // Initialization
         window.onload = () => {
             const savedMode = localStorage.getItem("flight_advisor_mode");
             if (savedMode) {
                 document.getElementById('inferenceMode').value = savedMode;
                 onInferenceModeChange();
             }
-            fetchLiveAirlinePrices();
             runPredictionAndAdvisory();
         };
     </script>

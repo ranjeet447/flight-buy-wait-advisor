@@ -1,5 +1,5 @@
 # Multi-stage production Docker build
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -12,23 +12,25 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Final runtime image
-FROM python:3.11-slim as runtime
+FROM python:3.11-slim AS runtime
 
 WORKDIR /app
 
+# Install OpenMP runtime for LightGBM and curl for healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy installed dependencies from builder
 COPY --from=builder /root/.local /root/.local
 ENV PATH=/root/.local/bin:$PATH
 
+# Copy application source code and artifacts
 COPY src/ /app/src/
 COPY service/ /app/service/
 COPY feature_store/ /app/feature_store/
 COPY models/ /app/models/
-COPY mlruns/ /app/mlruns/
 
 ENV PYTHONPATH=/app
 ENV PORT=8000
